@@ -27,9 +27,9 @@ class EcosystemScene:
 		self.w = world_width
 		self.h = world_height
 		super(EcosystemScene, self).__init__()
-		num_plants = 250
-		num_deer = 75
-		num_wolfs = 15
+		num_plants = 100
+		num_deer = 50
+		num_wolfs = 10
 		self.species_types = {
 			species.Plant: num_plants,
 			species.Deer: num_deer,
@@ -37,7 +37,7 @@ class EcosystemScene:
 		}
 		self.bodies_of_water = 2
 		self.water_body_size = "Large"
-		self.proportion = 0.6
+		self.proportion = .5
 
 		self.envir_func = None
 		self.world = None
@@ -154,15 +154,15 @@ while True:
 				pygame.quit()
 		if event.type == pygame.MOUSEBUTTONUP:
 			# # get object closest to where user clicked
-			# selected_obj = ecosystem.select_obj(pygame.mouse.get_pos())
+			selected_obj = ecosystem.select_obj(pygame.mouse.get_pos())
 			# # display stats of object
-			# print()
-			# display.analysis_mode(selected_obj)
+			print()
+			display.analysis_mode(selected_obj)
 			# print()
 			# # pause till user is ready to continue
 			# input("PRESS ENTER TO CONTINUE...")
-			selected_obj = ecosystem.select_obj(pygame.mouse.get_pos())
-			selected_obj.is_player = True
+			# selected_obj = ecosystem.select_obj(pygame.mouse.get_pos())
+			# selected_obj.is_player = True
 
 	# checking pressed held
 	keys = pygame.key.get_pressed()
