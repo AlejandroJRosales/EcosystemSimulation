@@ -2,10 +2,11 @@ import random
 import math
 import time
 import numpy as np
+import utils
 from environment import Water
 from social import Predator
+import ann
 import player
-import utils
 import pygame
 
 
@@ -104,7 +105,10 @@ class Animal(Living):
 		# self.focused_obj = None
 		self.coords_focused = Coords()
 		self.is_player = False
-	
+
+		# brain
+		self.brain = ann.DenseNetwork()
+
 	def neighbors(self, objs):
 		return [obj for obj in objs if utils.distance_formula(self.x, self.y, obj.x, obj.y) <= self.vision_dist and id(self) != id(obj)]
 
@@ -202,7 +206,8 @@ class Animal(Living):
 			}
 
 			# selfs priorities and respective need amount
-			self.priority_dict = dict(sorted(needs.items(), key=lambda item: item[1], reverse=True))
+			# old implementation for choosing next move
+			self.priority_dict = dict(sorted(needs.items(), key=lambda item: item[1], reverse=True))			
 
 			# starts with first priority
 			for need in self.priority_dict.keys():
@@ -210,13 +215,18 @@ class Animal(Living):
 				# if self knows location of priority and thus location not none go to coords
 				if obj_location is not None:
 					self.priority = need
-					self.coords_focused.x, self.coords_focused.y = obj_location[0], obj_location[1]
+					# self.coords_focused.x, self.coords_focused.y = obj_location[0], obj_location[1]
 					# if obj focused on is a predator transpose coords to go the
 					# opposite direction
-					if need == "predator":
-						self.transpose_focused_coords()
+					# if need == "predator":
+					# 	self.transpose_focused_coords()
 					# end here since a higher priority obj was found and located
 					break
+
+			# feed obj_locations, priorities, and difference in health as cost function through nn
+			health_diff = self.health - self.start_health
+			curr_coord = (self.x, self.y)
+			self.brain.propogate(curr_coord, self.priority_dict, self.obj_locations, health_diff)
 
 			# go to location
 			self.move()
